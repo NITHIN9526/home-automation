@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: openiot_m1
+      POSTGRES_USER: openiot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run npm run setup first}
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openiot -d openiot_m1"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  app:
+    profiles: ["app"]
+    build: .
+    ports: ["127.0.0.1:3000:3000"]
+    environment:
+      DATABASE_URL: postgres://openiot:${POSTGRES_PASSWORD}@postgres:5432/openiot_m1
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?Run npm run setup first}
+      APP_ORIGIN: http://localhost:3000
+      NODE_ENV: development # Local HTTP demo only; use HTTPS + production mode for deployment.
+      HOST: 0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["sh", "-c", "npm run migrate && npm start"]
+volumes:
+  pgdata:
