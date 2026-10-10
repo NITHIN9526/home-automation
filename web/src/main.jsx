@@ -5,6 +5,7 @@ import { AuthProvider, Protected } from "./auth";
 import { Landing } from "./Landing";
 import { AuthPage } from "./AuthPages";
 import { Workspace, Devices } from "./Dashboard";
+import { DeviceControl } from "./DeviceControl";
 import { Account } from "./Account";
 import { Docs } from "./Docs";
 import "./style.css";
@@ -20,6 +21,7 @@ function App() {
           <Route element={<Protected />}>
             <Route path="/dashboard" element={<Workspace />}>
               <Route index element={<Devices />} />
+              <Route path="devices/:id" element={<DeviceControl />} />
               <Route path="account" element={<Account />} />
             </Route>
           </Route>

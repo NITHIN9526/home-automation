@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { attachLive } from "./live.js";
 import { createApp } from "./app.js";
 const db = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -8,10 +9,11 @@ const db = new Pool({
 });
 db.on("error", (e) => console.error("Database connection error:", e.code));
 const key = Buffer.from(process.env.TOKEN_ENCRYPTION_KEY ?? "", "base64");
+const origin = process.env.APP_ORIGIN ?? "http://localhost:5173";
 const app = await createApp({
   db,
   encryptionKey: key,
-  origin: process.env.APP_ORIGIN ?? "http://localhost:5173",
+  origin,
   production: process.env.NODE_ENV === "production",
   trustProxy: process.env.TRUST_PROXY || false,
 });
@@ -20,8 +22,32 @@ const server = app.listen(
   process.env.HOST ?? "127.0.0.1",
   () => console.log(`Open IoT API running on port ${server.address().port}`),
 );
+const closeLive = attachLive(server, {
+  db,
+  origin,
+  production: process.env.NODE_ENV === "production",
+});
+console.log(
+  `Open the dashboard at ${origin}/dashboard (the browser address must match APP_ORIGIN).`,
+);
 server.requestTimeout = 15000;
 server.headersTimeout = 10000;
+const retention = setInterval(async () => {
+  try {
+    await db.query(
+      "DELETE FROM telemetry_samples WHERE received_at<now()-interval '24 hours'",
+    );
+    await db.query(
+      "UPDATE device_commands SET status='expired' WHERE status='pending' AND expires_at<=now()",
+    );
+    await db.query(
+      "DELETE FROM device_commands WHERE created_at<now()-interval '7 days' AND status<>'pending'",
+    );
+  } catch (e) {
+    console.error("Telemetry cleanup failed:", e.code);
+  }
+}, 600000);
+retention.unref();
 const cleanup = setInterval(
   () =>
     db
@@ -33,6 +59,8 @@ cleanup.unref();
 for (const signal of ["SIGTERM", "SIGINT"])
   process.once(signal, () => {
     clearInterval(cleanup);
+    clearInterval(retention);
+    closeLive();
     server.close(() => db.end().then(() => process.exit(0)));
     setTimeout(() => process.exit(1), 10000).unref();
   });

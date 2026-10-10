@@ -85,7 +85,7 @@ export function Workspace() {
             Workspace <span className="mx-3 text-stone-300">/</span>{" "}
             <b>Open IoT</b>
           </span>
-          <span className="version-pill">MILESTONE 1</span>
+          <span className="version-pill">MILESTONE 2</span>
         </header>
         <Outlet />
       </div>
@@ -286,7 +286,13 @@ export function Devices() {
                         <div className="flex gap-3 items-center">
                           <DeviceIcon type={d.deviceType} />
                           <div>
-                            <b>{d.name}</b>
+                            <Link
+                              className="device-open"
+                              to={`/dashboard/devices/${d.id}`}
+                              aria-label={`Open controls for ${d.name}`}
+                            >
+                              <b>{d.name}</b>
+                            </Link>
                             <small>{typeLabels[d.deviceType]}</small>
                           </div>
                         </div>

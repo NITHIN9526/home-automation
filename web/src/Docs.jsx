@@ -16,7 +16,7 @@ export function Docs() {
           <ArrowLeft size={14} />
           Home
         </Link>
-        <div className="eyebrow mt-10">MILESTONE 1 / QUICK START</div>
+        <div className="eyebrow mt-10">MILESTONE 2 / QUICK START</div>
         <h1>Make your first connection.</h1>
         <p className="text-lg text-muted">
           You only need your laptop. No ESP32 or other board required.
@@ -56,12 +56,20 @@ export function Docs() {
             <code>npm run simulate</code>
           </pre>
           <p>
-            Keep the terminal running. It sends a heartbeat every 10 seconds.
-            The dashboard refreshes every 5 seconds and marks the device online
-            after a valid heartbeat. Press Ctrl+C to stop; after 30 seconds
-            without a heartbeat the device becomes offline.
+            Keep the terminal running. It sends simulated temperature and
+            command acknowledgements every 2 seconds. The dashboard refreshes
+            every 5 seconds and marks the device online after a valid heartbeat.
+            Press Ctrl+C to stop; after 30 seconds without a heartbeat the
+            device becomes offline.
           </p>
-          <h2>5. Manage access</h2>
+          <h2>5. Open device controls</h2>
+          <p>
+            Click your device name in the registry. V0 shows simulated
+            temperature and a history chart; V1 provides ON/OFF controls; V2
+            sets brightness. A value changes only after the simulator
+            acknowledges it. Add more output pins with Add virtual pin.
+          </p>
+          <h2>6. Manage access</h2>
           <p>
             Click the masked token in the device list to reveal or rotate it
             after confirming your password. Rotation immediately invalidates the
@@ -79,17 +87,19 @@ export function Docs() {
           <h2>What’s included?</h2>
           <p>
             Landing page, registration, login, account settings, device
-            management, secure token access, and live heartbeat status. MQTT
-            commands, sensor charts, virtual pins, Google/Alexa, password
-            recovery, and email verification are later milestones.
+            management, secure token access, virtual pins, sensor charts,
+            command acknowledgements, and live WebSocket updates. MQTT,
+            Google/Alexa, drag-and-drop layouts, password recovery, and email
+            verification are later milestones.
           </p>
           <h2>Self-hosting</h2>
           <p>
             The source package includes a PostgreSQL schema, Node.js/Express
             API, React/Tailwind interface, Docker configuration, tests, and a
-            detailed README. This milestone uses a fresh database named{" "}
-            <code>openiot_m1</code>; it is not a migration over the previous
-            prototype.
+            detailed README. This upgrade retains your Milestone 1 database
+            named <code>openiot_m1</code>; migration 002 adds the pin, command,
+            and telemetry tables. Keep your existing environment files and
+            encryption key.
           </p>
           <Link className="btn mt-6" to="/dashboard">
             <Monitor size={17} />

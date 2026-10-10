@@ -1,18 +1,18 @@
-# Milestone 1 validation
+# Milestone 2 validation
 
-Validated using Node.js v24.19.0, PostgreSQL via PGlite/WASM, and Chromium 141 through Playwright 1.56.1.
+Validated 10 October 2026.
 
 ## Passed
 
-- Four automated API/security test groups: registration, login, bcrypt UTF-8 byte limits, duplicate emails, user isolation, CSRF/Origin checks, token encryption/reveal/rotation, old-token invalidation, heartbeat freshness, disable/re-enable, password changes, session revocation, and account deletion.
-- React/Tailwind production build: successful, 1,930 modules transformed.
-- Full browser journey: registration, protected dashboard, device creation, the actual Node simulator heartbeat, online status, token reveal, device rename, profile update, logout, login, and protected-route redirect.
-- Desktop (1440px) and mobile (390px) browser layouts checked. Document-level horizontal overflow checks passed. The device table scrolls inside its panel on small screens.
-- Captured and inspected landing/dashboard screenshots. Demo data belongs to an ephemeral test database and is not preloaded into the delivered app.
-- Dependency audit: zero known vulnerabilities reported at the checked versions.
+- Eight Node test groups: M1 registration/login and session lifecycle; bcrypt and token cryptography; pin ownership/ranges; durable commands and ACKs; idempotent command retry and duplicate old ACK protection; expiry/rotation/disable; WebSocket Origin/session/ownership and logout revocation; M1-to-M2 migration retaining user/device/token data.
+- React/Vite production build.
+- Chromium browser flow at 1440px desktop and 390px mobile: signup, device creation, actual simulator process, live WebSocket connection, V1 ON/OFF confirmed, V2 brightness confirmed, add/control V3, persisted state/history after reload, token reveal, rename, profile edit, logout/login, protected routes, no page-level horizontal overflow and no JavaScript page errors.
+- Desktop and mobile screenshots manually inspected. The chart adapts its coordinate width to the available space; the activity table has its own horizontal scroll container on small screens.
+- `npm audit`: zero vulnerabilities reported for the installed lockfile at validation time. WebSocket library pinned to patched ws 8.22.0.
+- Upgrade installer run against a disposable copy of M1. Existing environment files, a customized Docker host-port mapping, and migration 001 remained byte-identical. Previous source files were backed up before replacement. Installer uses Node built-ins only.
 
-## Scope limits
+## Boundaries
 
-Docker Compose and the production PostgreSQL container were not available for runtime verification. Database tests used the real PostgreSQL engine through PGlite, not a mock. Real HTTPS proxy deployment, email delivery, physical IoT boards, MQTT, and voice assistants were not tested or deployed. M1 provides heartbeat-based device presence; no hardware is required.
+Database integration used the actual PostgreSQL engine in PGlite/WASM, not a Docker PostgreSQL daemon. Docker startup and native Windows execution were not available in this environment. The installer was exercised on Linux and written with cross-platform Node filesystem/path APIs. The browser end-to-end test served the production frontend directly from Express; the development Vite WebSocket proxy is configured but was not covered by that browser run.
 
-Tests use bcrypt cost 4 for speed; the normal application uses cost 12. The browser test starts a disposable server on 127.0.0.1:4178 and tears it down. Never use its reduced-limit test configuration for deployment.
+No physical hardware, MQTT broker, voice assistant account linking, TLS termination, high-load benchmark, or independent security audit was performed. The simulator is a real HTTP API client but only changes process-local simulated outputs.

@@ -1487,8 +1487,229 @@ textarea {
 }
 
 @media (max-width: 600px) {
-  .simulator-banner > div { flex-basis: calc(100% - 65px); min-width: 0; }
-  .simulator-banner > .btn { width: 100%; margin-left: 0; }
+  .simulator-banner > div {
+    flex-basis: calc(100% - 65px);
+    min-width: 0;
+  }
+  .simulator-banner > .btn {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 /* Keep visually hidden table labels inside the horizontal scroll container. */
-.table-scroll, .device-table th { position: relative; }
+.table-scroll,
+.device-table th {
+  position: relative;
+}
+
+/* Milestone 2: device controls */
+.control-page .back-link {
+  margin-bottom: 22px;
+}
+.connection-bar {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted, #788272);
+  margin: -6px 0 26px;
+}
+.connection-bar > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.live-label {
+  color: #285340;
+}
+.control-note {
+  background: #edf3e5;
+  border: 1px solid #dae3cf;
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 13px;
+  margin: 16px 0;
+}
+.pin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.pin-card {
+  padding: 24px;
+  border: 1px solid #dce3d3;
+  border-radius: 15px;
+  background: white;
+  min-width: 0;
+}
+.pin-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.pin-heading code {
+  color: #7d8972;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.pin-card h2 {
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 9px;
+}
+.pin-value {
+  color: #244e3d;
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.pin-value small {
+  font-size: 17px;
+  margin-left: 6px;
+  color: #7a846f;
+}
+.pin-updated {
+  color: #818a79;
+  font-size: 11px;
+  margin: 9px 0 22px;
+}
+.switch-actions {
+  display: flex;
+  gap: 8px;
+}
+.switch-actions .btn {
+  flex: 1;
+  padding: 10px;
+}
+.range-label {
+  display: block;
+  font-size: 12px;
+  color: #5e6e57;
+}
+.range-label input {
+  display: block;
+  width: 100%;
+  margin: 12px 0 15px;
+  accent-color: #285340;
+}
+.command-hint {
+  font-size: 11px;
+  color: #7e876f;
+  min-height: 16px;
+  margin-top: 16px;
+}
+.error-text {
+  color: #b54b37;
+}
+.chart-panel,
+.command-panel {
+  margin-bottom: 24px;
+}
+.chart-select select {
+  max-width: 210px;
+  background: #f5f7f0;
+  padding: 9px 12px;
+  border: 1px solid #dae3ce;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.signal-chart {
+  padding: 20px 25px;
+}
+.signal-chart svg {
+  width: 100%;
+  display: block;
+  max-height: 290px;
+}
+.chart-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  color: #79816e;
+  margin-bottom: 15px;
+}
+.chart-summary b {
+  color: #244e3d;
+  margin-left: 8px;
+}
+.control-empty {
+  padding: 30px;
+  color: #79816e;
+  font-size: 13px;
+}
+.chart-empty {
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.command-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  background: #f1f3ec;
+  color: #67745d;
+}
+.command-status.acknowledged {
+  background: #eaf3de;
+  color: #507331;
+}
+.command-status.pending {
+  background: #fff3d5;
+  color: #8c6823;
+}
+.command-status.expired {
+  background: #fcebe5;
+  color: #a14c35;
+}
+.control-footnote {
+  font-size: 12px;
+  color: #7f8975;
+  line-height: 1.8;
+  max-width: 850px;
+}
+.pin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 14px;
+}
+.device-open {
+  color: #244e3d;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@media (max-width: 1100px) {
+  .pin-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .pin-grid {
+    grid-template-columns: 1fr;
+  }
+  .connection-bar {
+    gap: 10px 16px;
+  }
+  .chart-panel .panel-head {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .chart-summary {
+    flex-wrap: wrap;
+  }
+  .signal-chart {
+    padding: 16px 10px;
+  }
+  .pin-card {
+    padding: 21px;
+  }
+}

@@ -1,8 +1,9 @@
-import { chromium } from "@playwright/test";
+import { chromium, expect } from "@playwright/test";
 import { spawn } from "node:child_process";
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
 import { createTestDb } from "./database.js";
+import { attachLive } from "../server/live.js";
 import { createApp } from "../server/app.js";
 import { randomBytes } from "node:crypto";
 const db = await createTestDb();
@@ -15,6 +16,7 @@ const app = await createApp({
 });
 const server = app.listen(4178, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
+const stopLive = attachLive(server, { db, origin: "http://127.0.0.1:4178" });
 await mkdir("docs/screenshots", { recursive: true });
 const browser = await chromium.launch({
   headless: true,
@@ -111,6 +113,69 @@ try {
   await page
     .getByRole("button", { name: "Manage token for Workshop simulator" })
     .waitFor();
+  await page
+    .getByRole("link", { name: "Open controls for Workshop simulator" })
+    .click();
+  await page.getByText("Live updates connected", { exact: true }).waitFor();
+  const power = page.getByRole("article", { name: "Power V1", exact: true });
+  await page
+    .getByRole("button", { name: "Turn Power on", exact: true })
+    .click();
+  await expect(power.locator(".pin-value")).toHaveText("ON", {
+    timeout: 12000,
+  });
+  await page
+    .getByRole("button", { name: "Turn Power off", exact: true })
+    .click();
+  await expect(power.locator(".pin-value")).toHaveText("OFF", {
+    timeout: 12000,
+  });
+  const brightness = page.getByRole("slider", { name: "Brightness value" });
+  await brightness.focus();
+  await brightness.press("End");
+  await page
+    .getByRole("button", { name: "Apply brightness", exact: true })
+    .click();
+  await expect(
+    page
+      .getByRole("article", { name: "Brightness V2", exact: true })
+      .locator(".pin-value"),
+  ).toHaveText("100%", { timeout: 12000 });
+  await page
+    .getByRole("button", { name: "Add virtual pin", exact: true })
+    .click();
+  await page.getByLabel("Label", { exact: true }).fill("Desk lamp");
+  await page.getByRole("button", { name: "Add pin", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Turn Desk lamp on", exact: true })
+    .click();
+  await expect(
+    page
+      .getByRole("article", { name: "Desk lamp V3", exact: true })
+      .locator(".pin-value"),
+  ).toHaveText("ON", { timeout: 12000 });
+  await page.screenshot({
+    path: "docs/screenshots/controls-desktop.png",
+    fullPage: true,
+  });
+  await page.reload();
+  await expect(
+    page
+      .getByRole("article", { name: "Desk lamp V3", exact: true })
+      .locator(".pin-value"),
+  ).toHaveText("ON");
+  await page.getByRole("img", { name: /Temperature:.*readings/ }).waitFor();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({
+    path: "docs/screenshots/controls-mobile.png",
+    fullPage: true,
+  });
+  assert.ok(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  );
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.getByRole("link", { name: "My account", exact: true }).click();
   await page.getByLabel("Full name", { exact: true }).fill("Nithin Maker");
   await page.getByRole("button", { name: "Save profile" }).click();
@@ -155,7 +220,7 @@ try {
   await page.getByRole("heading", { name: "Your connected world." }).waitFor();
   assert.deepEqual(errors, []);
   console.log(
-    "Browser checks passed: registration, device creation, actual simulator heartbeat, token reveal, rename, profile, logout/login, protected route, desktop/mobile layout.",
+    "Browser checks passed: registration, device creation, actual simulator telemetry, WebSocket controls, ON/OFF ACKs, brightness ACK, custom pin, persisted history, token reveal, rename, profile, logout/login, protected route, desktop/mobile layout.",
   );
 } catch (error) {
   console.error("UI check location:", page.url());
@@ -172,6 +237,7 @@ try {
 } finally {
   simulator?.kill("SIGTERM");
   await browser.close();
+  stopLive();
   await new Promise((r) => server.close(r));
   await db.raw.close();
 }

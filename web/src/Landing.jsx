@@ -266,8 +266,8 @@ export function Landing() {
           <div className="eyebrow">THE BIGGER PICTURE</div>
           <h2>An open foundation for your IoT ecosystem.</h2>
           <p>
-            Milestone 1 brings accounts and device management. MQTT controls,
-            virtual-pin dashboards, and Google/Alexa bridges are the next
+            Milestone 2 adds live virtual-pin controls and sensor charts. MQTT,
+            drag-and-drop dashboards, and Google/Alexa bridges are the next
             steps—planned, not included in this release.
           </p>
           <Link to="/docs">

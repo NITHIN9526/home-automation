@@ -1,4 +1,5 @@
 import express from "express";
+import { installPinRoutes, seedPins } from "./pins.js";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import bcrypt from "bcryptjs";
@@ -78,7 +79,7 @@ export async function createApp({
   });
   app.use("/api", (req, res, next) => {
     // Device heartbeat uses a bearer token, never a browser session.
-    if (req.path === "/device/heartbeat") return next();
+    if (["/device/heartbeat", "/device/sync"].includes(req.path)) return next();
     if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) {
       if (req.get("Origin") !== origin)
         return next(fail(403, "Request origin is not allowed."));
@@ -358,6 +359,7 @@ export async function createApp({
         "INSERT INTO audit_events(user_id,action,device_id) VALUES($1,'device.create',$2)",
         [req.user.id, id],
       );
+      await seedPins(cx, id);
       return d;
     });
     res.status(201).json({ device, token: c.token });
@@ -372,16 +374,24 @@ export async function createApp({
         .strict()
         .refine((x) => Object.keys(x).length > 0)
         .parse(req.body);
-    const {
-      rows: [device],
-    } = await db.query(
-      `UPDATE devices SET name=COALESCE($1,name),
+    const device = await tx(async (cx) => {
+      const {
+        rows: [device],
+      } = await cx.query(
+        `UPDATE devices SET name=COALESCE($1,name),
    disabled_at=CASE WHEN $2::boolean IS NULL THEN disabled_at WHEN $2 THEN now() ELSE NULL END,
    last_seen_at=CASE WHEN $2::boolean IS NULL THEN last_seen_at ELSE NULL END,updated_at=now()
    WHERE id=$3 AND user_id=$4 RETURNING ${selectDevice}`,
-      [data.name ?? null, data.disabled ?? null, id, req.user.id],
-    );
-    if (!device) throw fail(404, "Device not found.");
+        [data.name ?? null, data.disabled ?? null, id, req.user.id],
+      );
+      if (!device) throw fail(404, "Device not found.");
+      if (data.disabled !== undefined)
+        await cx.query(
+          "UPDATE device_commands SET status='cancelled' WHERE device_id=$1 AND status='pending'",
+          [id],
+        );
+      return device;
+    });
     res.json({ device });
   });
   for (const operation of ["reveal", "rotate"])
@@ -410,6 +420,10 @@ export async function createApp({
               `UPDATE devices SET token_hash=$1,token_ciphertext=$2,token_iv=$3,token_tag=$4,token_preview=$5,
      token_version=token_version+1,token_created_at=now(),last_seen_at=NULL,updated_at=now() WHERE id=$6`,
               [c.hash, c.ciphertext, c.iv, c.tag, c.preview, id],
+            );
+            await cx.query(
+              "UPDATE device_commands SET status='cancelled' WHERE device_id=$1 AND status='pending'",
+              [id],
             );
           } else token = decryptToken(d, encryptionKey);
           await cx.query(
@@ -453,6 +467,7 @@ export async function createApp({
       lastSeenAt: device.last_seen_at,
     });
   });
+  installPinRoutes(app, { db, tx, authenticate, limit });
   app.use("/api", (req, res) =>
     res.status(404).json({ error: "API route not found." }),
   );
@@ -474,14 +489,10 @@ export async function createApp({
         .json({ error: "An account with this email already exists." });
     const status = err.status ?? 500;
     if (status >= 500) console.error("Request failed:", err.code ?? err.name);
-    res
-      .status(status)
-      .json({
-        error:
-          status >= 500
-            ? "Service unavailable. Please try again."
-            : err.message,
-      });
+    res.status(status).json({
+      error:
+        status >= 500 ? "Service unavailable. Please try again." : err.message,
+    });
   });
   return app;
 }

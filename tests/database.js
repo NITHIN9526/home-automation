@@ -1,10 +1,14 @@
 import { PGlite } from "@electric-sql/pglite";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 export async function createTestDb() {
   const pg = new PGlite();
-  await pg.exec(
-    await readFile(new URL("../sql/001-initial.sql", import.meta.url), "utf8"),
-  );
+  for (const file of (await readdir(new URL("../sql/", import.meta.url)))
+    .filter((f) => f.endsWith(".sql"))
+    .sort()) {
+    await pg.exec(
+      await readFile(new URL("../sql/" + file, import.meta.url), "utf8"),
+    );
+  }
   let tail = Promise.resolve();
   async function lock() {
     let release;
