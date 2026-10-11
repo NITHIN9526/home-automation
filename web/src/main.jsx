@@ -1,3 +1,4 @@
+import { Routines } from "./Routines";
 import { Builder } from "./Builder";
 import { Automations } from "./Automations";
 import "./milestone4.css";
@@ -12,28 +13,6 @@ import { DeviceControl } from "./DeviceControl";
 import { Account } from "./Account";
 import { Docs } from "./Docs";
 import "./style.css";
-// Support UUID generation on trusted local-network HTTP pages.
-if (typeof globalThis.crypto.randomUUID !== "function") {
-  globalThis.crypto.randomUUID = function () {
-    const bytes = new Uint8Array(16);
-    globalThis.crypto.getRandomValues(bytes);
-
-    bytes[6] = (bytes[6] & 0x0f) | 0x40;
-    bytes[8] = (bytes[8] & 0x3f) | 0x80;
-
-    const hex = Array.from(bytes, (byte) =>
-      byte.toString(16).padStart(2, "0")
-    ).join("");
-
-    return [
-      hex.slice(0, 8),
-      hex.slice(8, 12),
-      hex.slice(12, 16),
-      hex.slice(16, 20),
-      hex.slice(20),
-    ].join("-");
-  };
-}
 function App() {
   return (
     <BrowserRouter>
@@ -48,6 +27,9 @@ function App() {
               <Route index element={<Devices />} />
               <Route path="devices/:id" element={<DeviceControl />} />
               <Route path="account" element={<Account />} />
+              <Route path="groups" element={<Routines kind="groups" />} />
+              <Route path="scenes" element={<Routines kind="scenes" />} />
+              <Route path="rules" element={<Routines kind="rules" />} />
               <Route path="builder" element={<Builder />} />
               <Route path="automations" element={<Automations />} />
             </Route>

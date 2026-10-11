@@ -1,3 +1,4 @@
+import { uuid } from "./uuid";
 import React, { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
 import { Responsive } from "react-grid-layout/legacy";
@@ -356,7 +357,7 @@ function Widget({ w, connection, editing }) {
     try {
       await api(`/devices/${w.deviceId}/commands`, {
         method: "POST",
-        body: { id: crypto.randomUUID(), pin: w.pin, value },
+        body: { id: uuid(), pin: w.pin, value },
       });
     } catch (e) {
       setError(e.message);
@@ -594,7 +595,7 @@ function WidgetEditor({ initial, devices, onClose, onSave, count }) {
       initial.id
         ? structuredClone(initial)
         : {
-            id: crypto.randomUUID(),
+            id: uuid(),
             deviceId: devices[0]?.id ?? "",
             pin: "",
             kind: "value",

@@ -1,3 +1,4 @@
+import { uuid } from "./uuid";
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -301,8 +302,8 @@ function PinCard({ pin, id, online, command }) {
   async function send(value) {
     setBusy(true);
     setError("");
-    const commandId = crypto.randomUUID();
     try {
+      const commandId = uuid();
       await api(`/devices/${id}/commands`, {
         method: "POST",
         body: { id: commandId, pin: pin.pin, value },

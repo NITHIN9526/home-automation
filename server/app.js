@@ -1,3 +1,4 @@
+import { installRoutineRoutes } from "./routines.js";
 import { installFeatureRoutes } from "./features.js";
 import express from "express";
 import { installPinRoutes, seedPins } from "./pins.js";
@@ -470,6 +471,7 @@ export async function createApp({
   });
   installPinRoutes(app, { db, tx, authenticate, limit });
   installFeatureRoutes(app, { db, tx, authenticate, limit });
+  installRoutineRoutes(app, { db, tx, authenticate, limit });
   app.use("/api", (req, res) =>
     res.status(404).json({ error: "API route not found." }),
   );

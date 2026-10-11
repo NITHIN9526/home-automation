@@ -5,7 +5,7 @@ import { randomUUID, randomBytes } from 'node:crypto';
 import { PGlite } from '@electric-sql/pglite';
 import { makeCredential, decryptToken } from '../server/security.js';
 
-test('Existing accounts, tokens and pins survive migrations 002 and 003',async()=>{
+test('Existing accounts, tokens and pins survive migrations 002, 003 and 004',async()=>{
  const db=new PGlite();
  try {
   await db.exec(await readFile(new URL('../sql/001-initial.sql',import.meta.url),'utf8'));
@@ -15,6 +15,7 @@ test('Existing accounts, tokens and pins survive migrations 002 and 003',async()
    VALUES($1,$2,'Heart','simulator',$3,$4,$5,$6,$7)`,[id,user.id,c.hash,c.ciphertext,c.iv,c.tag,c.preview]);
   await db.exec(await readFile(new URL('../sql/002-virtual-pins.sql',import.meta.url),'utf8'));
   await db.exec(await readFile(new URL('../sql/003-dashboards-automations.sql',import.meta.url),'utf8'));
+  await db.exec(await readFile(new URL('../sql/004-rooms-scenes-rules.sql',import.meta.url),'utf8'));
   const {rows:[after]}=await db.query('SELECT * FROM devices WHERE id=$1',[id]);
   assert.equal(after.name,'Heart');assert.equal(after.user_id,user.id);
   assert.equal(decryptToken(after,key),c.token);

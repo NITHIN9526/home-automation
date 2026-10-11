@@ -1,3 +1,4 @@
+import { startRuleEngine } from "./routines.js";
 import { startScheduler } from "./features.js";
 import { startMqtt } from "./mqtt.js";
 import { Pool } from "pg";
@@ -34,6 +35,7 @@ const server = app.listen(
   () => console.log(`Open IoT API running on port ${server.address().port}`),
 );
 const stopScheduler = startScheduler(db);
+const stopRules = await startRuleEngine(db);
 const closeLive = attachLive(server, {
   db,
   origin,
@@ -72,6 +74,7 @@ for (const signal of ["SIGTERM", "SIGINT"])
   process.once(signal, async () => {
     clearInterval(cleanup);
     clearInterval(retention);
+    await stopRules();
     await stopScheduler();
     closeLive();
     if (mqtt) await mqtt.close();

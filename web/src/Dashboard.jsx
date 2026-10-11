@@ -43,6 +43,9 @@ export function Workspace() {
           </NavLink>
           <NavLink to="/dashboard/builder"><PanelsTopLeft size={18}/> My dashboard</NavLink>
           <NavLink to="/dashboard/automations"><Clock3 size={18}/> Automations</NavLink>
+          <NavLink to="/dashboard/groups"><LayoutDashboard size={18}/> Rooms &amp; groups</NavLink>
+          <NavLink to="/dashboard/scenes"><Power size={18}/> Scenes</NavLink>
+          <NavLink to="/dashboard/rules"><Radio size={18}/> Sensor rules</NavLink>
           <NavLink to="/dashboard/account">
             <UserRound size={18} />
             My account
@@ -89,7 +92,7 @@ export function Workspace() {
             Workspace <span className="mx-3 text-stone-300">/</span>{" "}
             <b>Open IoT</b>
           </span>
-          <span className="version-pill">MILESTONE 4</span>
+          <span className="version-pill">MILESTONE 5</span>
         </header>
         <Outlet />
       </div>
