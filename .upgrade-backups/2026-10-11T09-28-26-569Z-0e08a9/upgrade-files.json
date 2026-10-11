@@ -1,0 +1,82 @@
+[
+  {
+    "path": "package.json",
+    "existed": true
+  },
+  {
+    "path": "package-lock.json",
+    "existed": true
+  },
+  {
+    "path": "web/package.json",
+    "existed": true
+  },
+  {
+    "path": "server/features.js",
+    "existed": false
+  },
+  {
+    "path": "server/app.js",
+    "existed": true
+  },
+  {
+    "path": "server/index.js",
+    "existed": true
+  },
+  {
+    "path": "server/pins.js",
+    "existed": true
+  },
+  {
+    "path": "sql/002-virtual-pins.sql",
+    "existed": true
+  },
+  {
+    "path": "sql/003-dashboards-automations.sql",
+    "existed": false
+  },
+  {
+    "path": "web/src/Builder.jsx",
+    "existed": false
+  },
+  {
+    "path": "web/src/Automations.jsx",
+    "existed": false
+  },
+  {
+    "path": "web/src/milestone4.css",
+    "existed": false
+  },
+  {
+    "path": "web/src/main.jsx",
+    "existed": true
+  },
+  {
+    "path": "web/src/Dashboard.jsx",
+    "existed": true
+  },
+  {
+    "path": "web/src/DeviceControl.jsx",
+    "existed": true
+  },
+  {
+    "path": "web/src/Docs.jsx",
+    "existed": true
+  },
+  {
+    "path": "tests/features.test.js",
+    "existed": false
+  },
+  {
+    "path": "tests/features-fixture.js",
+    "existed": false
+  },
+  {
+    "path": "tests/m4-browser-check.mjs",
+    "existed": false
+  },
+  {
+    "path": "tests/upgrade.test.js",
+    "existed": true
+  }
+]

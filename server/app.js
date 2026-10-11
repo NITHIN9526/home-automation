@@ -1,3 +1,4 @@
+import { installFeatureRoutes } from "./features.js";
 import express from "express";
 import { installPinRoutes, seedPins } from "./pins.js";
 import cookieParser from "cookie-parser";
@@ -46,7 +47,7 @@ export async function createApp({
   app.disable("x-powered-by");
   if (trustProxy) app.set("trust proxy", trustProxy);
   app.use(helmet({ strictTransportSecurity: production ? undefined : false }));
-  app.use(express.json({ limit: "8kb" }));
+  app.use(express.json({ limit: "32kb" }));
   app.use(cookieParser());
   const cookieName = production ? "__Host-openiot_session" : "openiot_session";
   const cookieOptions = {
@@ -468,6 +469,7 @@ export async function createApp({
     });
   });
   installPinRoutes(app, { db, tx, authenticate, limit });
+  installFeatureRoutes(app, { db, tx, authenticate, limit });
   app.use("/api", (req, res) =>
     res.status(404).json({ error: "API route not found." }),
   );

@@ -21,7 +21,7 @@ const display = (v) =>
       : String(v);
 const time = (v) =>
   v ? new Date(v).toLocaleTimeString() : "Waiting for device";
-function useLiveDevice(id) {
+export function useLiveDevice(id) {
   const [state, setState] = useState(null),
     [error, setError] = useState(""),
     [live, setLive] = useState(false);
@@ -380,7 +380,7 @@ function PinCard({ pin, id, online, command }) {
                 type="range"
                 min={pin.min}
                 max={pin.max}
-                step="any"
+                step={pin.unit === "%" ? "1" : "any"}
                 value={draft}
                 disabled={disabled}
                 onChange={(e) => setDraft(Number(e.target.value))}

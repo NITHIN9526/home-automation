@@ -1,0 +1,46 @@
+[
+  {
+    "path": "package.json",
+    "existed": true
+  },
+  {
+    "path": "package-lock.json",
+    "existed": true
+  },
+  {
+    "path": "server/index.js",
+    "existed": true
+  },
+  {
+    "path": "server/mqtt.js",
+    "existed": false
+  },
+  {
+    "path": "server/events.js",
+    "existed": false
+  },
+  {
+    "path": "server/pins.js",
+    "existed": true
+  },
+  {
+    "path": "server/live.js",
+    "existed": true
+  },
+  {
+    "path": "web/src/DeviceControl.jsx",
+    "existed": true
+  },
+  {
+    "path": "web/src/Docs.jsx",
+    "existed": true
+  },
+  {
+    "path": "tests/mqtt.test.js",
+    "existed": false
+  },
+  {
+    "path": "sql/002-virtual-pins.sql",
+    "existed": true
+  }
+]

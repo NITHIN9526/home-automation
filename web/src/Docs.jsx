@@ -66,8 +66,8 @@ export function Docs() {
           <p>
             Click your device name in the registry. V0 shows simulated
             temperature and a history chart; V1 provides ON/OFF controls; V2
-            sets brightness. A value changes only after the simulator
-            acknowledges it. Add more output pins with Add virtual pin.
+            sets brightness. A value changes only after the device
+            acknowledges it. Extra virtual pins also require firmware support.
           </p>
           <h2>6. Manage access</h2>
           <p>
@@ -84,12 +84,16 @@ export function Docs() {
               repositories, or support messages.
             </p>
           </div>
+          <h2>7. Customize your dashboard</h2>
+          <p>Open My dashboard from the sidebar. Add switches, sliders, gauges, values and charts. Map each widget to a compatible device pin, arrange desktop and phone layouts, then save your dashboard.</p>
+          <h2>8. Schedule automations</h2>
+          <p>Open Automations to schedule ON/OFF or numeric commands once, daily, or on selected weekdays. Choose your timezone (Asia/Kolkata for India). Keep the backend running and the laptop awake. Offline devices and missed schedules over one minute late are skipped. Check run history for device confirmations.</p>
           <h2>What’s included?</h2>
           <p>
             Landing page, registration, login, account settings, device
             management, secure token access, virtual pins, sensor charts,
-            command acknowledgements, and live WebSocket updates. MQTT,
-            Google/Alexa, drag-and-drop layouts, password recovery, and email
+            command acknowledgements, live WebSocket updates, and an optional LAN MQTT broker.
+            Custom widget layouts and time-based automations are available. Google/Alexa, password recovery, and email
             verification are later milestones.
           </p>
           <h2>Self-hosting</h2>

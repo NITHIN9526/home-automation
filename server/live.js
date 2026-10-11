@@ -1,3 +1,4 @@
+import { events } from "./events.js";
 import { WebSocketServer, WebSocket } from "ws";
 import { z } from "zod";
 import { hashToken, tokenPattern } from "./security.js";
@@ -68,6 +69,7 @@ export function attachLive(
       wss.handleUpgrade(req, socket, head, (ws) => {
         socket.removeListener("error", onError);
         sessions.set(key, (sessions.get(key) ?? 0) + 1);
+        let dirty = false;
         let busy = false,
           alive = true;
         ws.on("error", () => ws.terminate());
@@ -76,7 +78,9 @@ export function attachLive(
         });
         ws.on("message", () => ws.close(1008, "Read-only stream"));
         async function send() {
-          if (busy || ws.readyState !== WebSocket.OPEN) return;
+          if (ws.readyState !== WebSocket.OPEN) return;
+          if (busy) { dirty = true; return; }
+          dirty = false;
           busy = true;
           try {
             const u = await identity(hash);
@@ -92,8 +96,11 @@ export function attachLive(
             );
           } finally {
             busy = false;
+            if (dirty) queueMicrotask(send);
           }
         }
+        const onState = (deviceId) => { if (deviceId === id.data) send(); };
+        events.on("state", onState);
         const timer = setInterval(send, intervalMs);
         const heartbeat = setInterval(() => {
           if (!alive) return ws.terminate();
@@ -103,6 +110,7 @@ export function attachLive(
         timer.unref();
         heartbeat.unref();
         ws.once("close", () => {
+          events.off("state", onState);
           clearInterval(timer);
           clearInterval(heartbeat);
           const n = (sessions.get(key) ?? 1) - 1;

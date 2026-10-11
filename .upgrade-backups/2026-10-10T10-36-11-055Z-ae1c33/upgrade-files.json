@@ -1,0 +1,90 @@
+[
+  {
+    "path": "package.json",
+    "existed": true
+  },
+  {
+    "path": "package-lock.json",
+    "existed": true
+  },
+  {
+    "path": "README.md",
+    "existed": true
+  },
+  {
+    "path": "UPGRADE.md",
+    "existed": false
+  },
+  {
+    "path": "server/app.js",
+    "existed": true
+  },
+  {
+    "path": "server/index.js",
+    "existed": true
+  },
+  {
+    "path": "server/live.js",
+    "existed": false
+  },
+  {
+    "path": "server/pins.js",
+    "existed": false
+  },
+  {
+    "path": "scripts/simulator.js",
+    "existed": true
+  },
+  {
+    "path": "sql/002-virtual-pins.sql",
+    "existed": false
+  },
+  {
+    "path": "web/vite.config.js",
+    "existed": true
+  },
+  {
+    "path": "web/src/main.jsx",
+    "existed": true
+  },
+  {
+    "path": "web/src/DeviceControl.jsx",
+    "existed": false
+  },
+  {
+    "path": "web/src/Dashboard.jsx",
+    "existed": true
+  },
+  {
+    "path": "web/src/Docs.jsx",
+    "existed": true
+  },
+  {
+    "path": "web/src/Landing.jsx",
+    "existed": true
+  },
+  {
+    "path": "web/src/style.css",
+    "existed": true
+  },
+  {
+    "path": "tests/database.js",
+    "existed": true
+  },
+  {
+    "path": "tests/pins.test.js",
+    "existed": false
+  },
+  {
+    "path": "tests/upgrade.test.js",
+    "existed": false
+  },
+  {
+    "path": "tests/browser-check.mjs",
+    "existed": true
+  },
+  {
+    "path": "docs/VALIDATION.md",
+    "existed": true
+  }
+]

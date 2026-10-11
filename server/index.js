@@ -1,3 +1,5 @@
+import { startScheduler } from "./features.js";
+import { startMqtt } from "./mqtt.js";
 import { Pool } from "pg";
 import { attachLive } from "./live.js";
 import { createApp } from "./app.js";
@@ -17,11 +19,21 @@ const app = await createApp({
   production: process.env.NODE_ENV === "production",
   trustProxy: process.env.TRUST_PROXY || false,
 });
+const mqtt =
+  process.env.MQTT_ENABLED === "true"
+    ? await startMqtt({
+        db,
+        host: process.env.MQTT_HOST ?? "127.0.0.1",
+        port: Number(process.env.MQTT_PORT ?? 1883),
+      })
+    : null;
+if (mqtt) console.log(`MQTT listening on port ${mqtt.port}`);
 const server = app.listen(
   Number(process.env.PORT ?? 3000),
   process.env.HOST ?? "127.0.0.1",
   () => console.log(`Open IoT API running on port ${server.address().port}`),
 );
+const stopScheduler = startScheduler(db);
 const closeLive = attachLive(server, {
   db,
   origin,
@@ -57,10 +69,12 @@ const cleanup = setInterval(
 );
 cleanup.unref();
 for (const signal of ["SIGTERM", "SIGINT"])
-  process.once(signal, () => {
+  process.once(signal, async () => {
     clearInterval(cleanup);
     clearInterval(retention);
+    await stopScheduler();
     closeLive();
+    if (mqtt) await mqtt.close();
     server.close(() => db.end().then(() => process.exit(0)));
     setTimeout(() => process.exit(1), 10000).unref();
   });
